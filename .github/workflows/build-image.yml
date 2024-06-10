@@ -21,10 +21,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - run: ls -la
-
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
           push: true
+          file: Dockerfile.export
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/nextjs-example:latest
