@@ -24,3 +24,14 @@ jobs:
 
     - name: Build
       run: yarn build
+
+    - name: Deploy to VPS [export]
+      run: |
+        mkdir -p $HOME/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/${{ github.sha }}"
+        chmod 600 "$HOME/.ssh/${{ github.sha }}"
+
+        rsync -avzhe --delete ssh \
+        -i $HOME/.ssh/${{ github.sha }} \
+        -o StrictHostKeyChecking=no \
+        out ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/var/www/html
