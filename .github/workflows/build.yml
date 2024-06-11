@@ -13,32 +13,32 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: 'yarn'
+    # - name: Set up Node.js
+    #   uses: actions/setup-node@v4
+    #   with:
+    #     node-version: 20
+    #     cache: 'yarn'
 
-    - name: Install dependencies
-      run: yarn --frozen-lockfile
+    # - name: Install dependencies
+    #   run: yarn --frozen-lockfile
 
-    - name: Build
-      run: yarn build
+    # - name: Build
+    #   run: yarn build
     
-    - name: Dump GitHub context
-      env:
-        GITHUB_CONTEXT: ${{ toJSON(github) }}
-      run: echo "$GITHUB_CONTEXT"
+    # - name: Dump GitHub context
+    #   env:
+    #     GITHUB_CONTEXT: ${{ toJSON(github) }}
+    #   run: echo "$GITHUB_CONTEXT"
     
-    - name: Deploy to VPS [export]
-      run: |
-        mkdir -p $HOME/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/${{ github.sha }}"
-        chmod 600 "$HOME/.ssh/${{ github.sha }}"
+    # - name: Deploy to VPS [export]
+    #   run: |
+    #     mkdir -p $HOME/.ssh
+    #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/${{ github.sha }}"
+    #     chmod 600 "$HOME/.ssh/${{ github.sha }}"
 
-        # DO NOT CHANGE THIS COMMAND :)
-        rsync -avzh --delete -e "ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no" \
-        out/* ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/var/www/html
+    #     # DO NOT CHANGE THIS COMMAND :)
+    #     rsync -avzh --delete -e "ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no" \
+    #     out/* ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/var/www/html
     
     - name: Notify
       run: |
@@ -49,9 +49,9 @@ jobs:
           "parse_mode": "MarkdownV2",
           "text": "
           🚀 *Deployed*
-          🚀 hoanghaix86 created commit:
+          🚀 $${{ github.actor	}} created commit:
           👉 Actions: Here
           Repository: [Here](${{ github.repositoryUrl }})
-          📄 See changes: [Here](http://)
+          📄 See changes: [Here](https://github.com/${{ github.repository }}/commit/${{github.sha}})
           "
         }'
