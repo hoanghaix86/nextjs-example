@@ -24,7 +24,12 @@ jobs:
 
     - name: Build
       run: yarn build
-
+    
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJSON(github) }}
+      run: echo "$GITHUB_CONTEXT"
+    
     - name: Deploy to VPS [export]
       run: |
         mkdir -p $HOME/.ssh
@@ -32,7 +37,7 @@ jobs:
         chmod 600 "$HOME/.ssh/${{ github.sha }}"
 
         rsync -avzh --delete -e ssh \
-        -i $HOME/.ssh/${{ github.sha }} \
+        -i "$HOME/.ssh/${{ github.sha }}" \
         -o StrictHostKeyChecking=no \
         out/* ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/var/www/html
     
@@ -40,15 +45,13 @@ jobs:
       run: |
         curl -XPOST -H 'Content-type: application/json' \
         https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
-        --data '
-        {
+        --data '{
           "chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}",
           "parse_mode": "MarkdownV2",
           "text": "\n🚀 *Deployed*
           🚀 hoanghaix86 created commit:
           👉 Actions: Here
-          📄 See changes: Here
+          Repository: [Here](${{ github.repositoryUrl }})
+          📄 See changes: [Here](http://)
           "
-
-        }
-        '
+        }'
