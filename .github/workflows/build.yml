@@ -51,8 +51,12 @@ jobs:
           🚀 *Deployed*
 
           🚀 ${{ github.actor	}} created commit:
-            
-          👉 Actions: Here
+
+          📦 Branch: ${{ github.ref }}
+          
+          Workflow: ${{ github.workflow }}
+
+          👉 Actions: [Here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
           Repository: [Here](https://github.com/${{ github.repository }})
 
