@@ -36,9 +36,8 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/${{ github.sha }}"
         chmod 600 "$HOME/.ssh/${{ github.sha }}"
 
-        rsync -avzh --delete -e ssh \
-        -i "$HOME/.ssh/${{ github.sha }}" \
-        -o StrictHostKeyChecking=no \
+        # DO NOT CHANGE THIS COMMAND :)
+        rsync -avzh --delete -e "ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no" \
         out/* ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/var/www/html
     
     - name: Notify
