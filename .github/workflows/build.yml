@@ -54,7 +54,7 @@ jobs:
             
           👉 Actions: Here
 
-          Repository: [Here](${{ github.repository }})
+          Repository: [Here](https://github.com/${{ github.repository }})
 
           📄 See changes: [Here](https://github.com/${{ github.repository }}/commit/${{github.sha}})
           "
