@@ -38,7 +38,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/${{ github.sha }}"
           chmod 600 "$HOME/.ssh/${{ github.sha }}"
           
-          ssh -t -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no << EOF
+          ssh -t -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << EOF
           IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME }}/nextjs-example:${{ steps.sha.outputs.SHA_SHORT }}"
           docker pull $IMAGE_NAME
           docker stop nextjs-example
