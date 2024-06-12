@@ -39,11 +39,10 @@ jobs:
           chmod 600 "$HOME/.ssh/${{ github.sha }}"
           
           ssh -t -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << EOF
-          IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME }}/nextjs-example:${{ steps.sha.outputs.SHA_SHORT }}"
-          docker pull $IMAGE_NAME
+          docker pull "${{ secrets.DOCKERHUB_USERNAME }}/nextjs-example:${{ steps.sha.outputs.SHA_SHORT }}"
           docker stop nextjs-example
           docker rm nextjs-example
-          docker run -d --name nextjs-example -p 3000:80 $IMAGE_NAME
+          docker run -d --name nextjs-example -p 3000:80 "${{ secrets.DOCKERHUB_USERNAME }}/nextjs-example:${{ steps.sha.outputs.SHA_SHORT }}"
           EOF
 
       - name: Notify
