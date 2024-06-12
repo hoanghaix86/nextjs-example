@@ -23,7 +23,7 @@ jobs:
       
       - name: SHA Short
         id: sha
-        run: echo "SHA_SHORT=$(echo $GITHUB_SHA | cut -c1-8)" >> "$GITHUB_OUTPUT"
+        run: echo "SHA_SHORT=$(echo $GITHUB_SHA | cut -c1-7)" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
         uses: docker/build-push-action@v5
