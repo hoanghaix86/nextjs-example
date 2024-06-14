@@ -31,8 +31,8 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/${{ github.sha }}"
         chmod 600 "$HOME/.ssh/${{ github.sha }}"
 
-        rsync -avzh --delete -e "ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no" \
-        public .next/standalone .next/static ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/app/nextjs
+        rsync -azh --delete -e "ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no" \
+        public .next/standalone/* .next/static ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/app/nextjs
 
         ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << EOF
         chown -R alpha:alpha /app/nextjs
