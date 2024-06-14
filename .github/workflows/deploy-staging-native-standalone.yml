@@ -1,0 +1,81 @@
+name: Deploy Staging Native [NextJs Standalone]
+
+on:
+  push:
+    branches:
+    - ci
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'yarn'
+
+    - name: Install dependencies
+      run: yarn --frozen-lockfile
+    
+    - name: Change mode export to standalone
+      run: |
+        sed "s/output.*/output: \'standalone\'/" next.config.mjs
+
+    - name: Build
+      run: yarn build
+    
+    - name: Deploy
+      run: |
+        mkdir -p $HOME/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/${{ github.sha }}"
+        chmod 600 "$HOME/.ssh/${{ github.sha }}"
+
+        rsync -avzh --delete -e "ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no" \
+        public .next/standalone .next/static ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/app/nextjs
+
+        ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << EOF
+        chown -R alpha:alpha /app/nextjs
+        if [ -f /app/services/nextjs.service ]; then
+          sudo systemctl restart nextjs
+        else
+          cat << EOF > /app/services/nextjs.service
+          [Unit]
+          Description=NextJs Service
+          After=network.target
+
+          [Service]
+          User=alpha
+          WorkingDirectory=/app/nextjs
+          ExecStart=NODE_ENV=production; node server.js
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+          sudo ln -s /app/services/nextjs.service /etc/systemd/system/nextjs.service
+          sudo systemctl daemon-reload
+          sudo systemctl enable nextjs
+          sudo systemctl start nextjs
+        fi
+        
+        EOF
+    
+    - name: Notify
+      run: |
+        curl -XPOST -H 'Content-type: application/json' \
+        https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+        --data '{
+          "chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}",
+          "parse_mode": "MarkdownV2",
+          "text": "🚀 *Deployed*
+          👉 Workflow: ${{ github.workflow }}
+          👉 Actions: [Here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          📄 Repository: [Here](https://github.com/${{ github.repository }})
+          📄 See changes: [Here](https://github.com/${{ github.repository }}/commit/${{github.sha}})
+          "
+        }'
