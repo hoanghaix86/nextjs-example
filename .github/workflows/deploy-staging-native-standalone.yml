@@ -31,8 +31,18 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/${{ github.sha }}"
         chmod 600 "$HOME/.ssh/${{ github.sha }}"
 
+        ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << EOF
+        mkdir -p /app/nextjs/.next/static
+        EOF
+
         rsync -azh --delete -e "ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no" \
-        public .next/standalone/* .next/static ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/app/nextjs
+        public ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/app/nextjs
+
+        rsync -azh --delete -e "ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no" \
+        .next/standalone/* ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/app/nextjs
+        
+        rsync -azh --delete -e "ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no" \
+        .next/static ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/app/nextjs/.next/static
 
         ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << EOF
         chown -R alpha:alpha /app/nextjs
