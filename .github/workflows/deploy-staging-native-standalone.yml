@@ -22,10 +22,6 @@ jobs:
     - name: Install dependencies
       run: yarn --frozen-lockfile
     
-    - name: Change mode export to standalone
-      run: |
-        sed -i "s/output.*/output: \'standalone\'/" next.config.mjs
-
     - name: Build
       run: |
         yarn build
