@@ -24,7 +24,7 @@ jobs:
     
     - name: Change mode export to standalone
       run: |
-        sed "s/output.*/output: \'standalone\'/" next.config.mjs
+        sed -i "s/output.*/output: \'standalone\'/" next.config.mjs
 
     - name: Build
       run: |
