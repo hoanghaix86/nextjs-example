@@ -27,7 +27,10 @@ jobs:
         sed "s/output.*/output: \'standalone\'/" next.config.mjs
 
     - name: Build
-      run: yarn build
+      run: |
+        yarn build
+        ls -la
+        ls -la .next
     
     - name: Deploy
       run: |
