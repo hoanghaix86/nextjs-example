@@ -39,7 +39,7 @@ jobs:
         public ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/app/nextjs
         
         rsync -azh --delete -e "ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no" \
-        .next/standalone/.[]* ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/app/nextjs
+        .next/standalone/* ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/app/nextjs
 
         rsync -azh --delete -e "ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no" \
         .next/standalone/.next ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/app/nextjs
