@@ -1,9 +1,11 @@
 name: Deploy env Docker [NextJs Standalone]
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
-    - ci
+      - main
+
 
 jobs:
   docker:
