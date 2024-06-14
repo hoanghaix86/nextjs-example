@@ -23,10 +23,7 @@ jobs:
       run: yarn --frozen-lockfile
     
     - name: Build
-      run: |
-        yarn build
-        ls -la
-        ls -la .next
+      run: yarn build
     
     - name: Deploy
       run: |
@@ -42,7 +39,7 @@ jobs:
         if [ -f /app/services/nextjs.service ]; then
           sudo systemctl restart nextjs
         else
-          cat << EOF > /app/services/nextjs.service
+          cat << EOF >> /app/services/nextjs.service
           [Unit]
           Description=NextJs Service
           After=network.target
