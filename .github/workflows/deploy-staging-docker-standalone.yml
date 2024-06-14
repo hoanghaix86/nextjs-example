@@ -1,4 +1,4 @@
-name: Deploy Staging Docker [NextJs Export]
+name: Deploy Staging Docker [NextJs Standalone]
 
 on:
   push:
