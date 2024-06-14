@@ -36,29 +36,7 @@ jobs:
 
         ssh -i $HOME/.ssh/${{ github.sha }} -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << EOF
         chown -R alpha:alpha /app/nextjs
-        if [ -f /app/services/nextjs.service ]; then
-          sudo systemctl restart nextjs
-        else
-          cat << EOF >> /app/services/nextjs.service
-          [Unit]
-          Description=NextJs Service
-          After=network.target
-
-          [Service]
-          User=alpha
-          WorkingDirectory=/app/nextjs
-          ExecStart=NODE_ENV=production; node server.js
-          Restart=always
-
-          [Install]
-          WantedBy=multi-user.target
-          EOF
-          sudo ln -s /app/services/nextjs.service /etc/systemd/system/nextjs.service
-          sudo systemctl daemon-reload
-          sudo systemctl enable nextjs
-          sudo systemctl start nextjs
-        fi
-        
+        sudo systemctl restart nextjs
         EOF
     
     - name: Notify
